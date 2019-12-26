@@ -1,155 +1,35 @@
 import React, {Component, useState} from "react";
 import ReactDOM from "react-dom";
 
+import { AddSliderView } from './views/AddSliderView';
+import { StudentDrawer } from './views/StudentDrawerView';
+
+import { getData, getUsers, saveData, deleteSlider, addSlider } from "./actions/actions";
+
 import "./styles.css";
 
 const USER = "lmpotasi";
-
-const GradeSlider = ({slider}) => (
-    <tr className="gradeSlider">
-        <th className="sliderId">{slider.id}</th>
-        <input type="range" {...slider} className="slider"/>
-        <th className="sliderValue">{slider.value}</th>
-    </tr>
-);
-
-const AddSliderView = ({addSlider}) => {
-    const [id, setId] = useState();
-    const [min, setMin] = useState();
-    const [max, setMax] = useState();
-    const [value, setValue] = useState();
-    const [step, setStep] = useState();
-    const [isExtraCredit, setIsExtraCredit] = useState(false);
-    return (
-        <tr className="studentDrawerContent">
-            <th>
-                <input
-                    type="text"
-                    name="newSliderName"
-                    value={id}
-                    className="inputId"
-                    placeholder="Slider name"
-                    onChange={e => setId(e.target.value)}
-                />
-            </th>
-            <th>
-                <input
-                    type="text"
-                    name="newSliderMin"
-                    value={min}
-                    className="inputMin"
-                    placeholder="min"
-                    onChange={e =>
-                        isNaN(e.target.value) ? null : setMin(e.target.value)
-                    }
-                />
-            </th>
-            <th>
-                <input
-                    type="text"
-                    name="newSliderMax"
-                    value={max}
-                    className="inputMax"
-                    placeholder="max"
-                    onChange={e =>
-                        isNaN(e.target.value) ? null : setMax(e.target.value)
-                    }
-                />
-            </th>
-            <th>
-                <input
-                    type="text"
-                    name="newSliderValue"
-                    value={value}
-                    className="inputValue"
-                    placeholder="default value"
-                    onChange={e =>
-                        isNaN(e.target.value) ? null : setValue(e.target.value)
-                    }
-                />
-            </th>
-            <th>
-                <input
-                    type="text"
-                    name="newSliderStep"
-                    value={step}
-                    className="inputStep"
-                    placeholder="step"
-                    onChange={e => setStep(e.target.value)}
-                />
-            </th>
-            <th>
-                <input
-                    type="checkbox"
-                    name="newSliderExtraCredit"
-                    checked={isExtraCredit}
-                    className="inputExtraCredit"
-                    onChange={() => setIsExtraCredit(!isExtraCredit)}
-                />
-            </th>
-            <button
-                onClick={() => addSlider({id, min, max, value, isExtraCredit, step})}
-            >
-                Add Slider
-            </button>
-        </tr>
-    );
-};
-
-/**
- * StudentDrawer includes the ui for a given student's name, grade, and sliders for their grades
- */
-const StudentDrawer = ({student, toggleDrawer, isOpen}) => {
-    const [height, setHeight] = useState("");
-    let total = 0;
-    let max = 0;
-    const sliders = Object.values(student.sliders).map(slider => {
-        total += parseFloat(slider.value);
-        // extra credit does not count tward the max grade in a catagory
-        if (!slider.isExtraCredit) {
-            max += parseFloat(slider.max);
-        }
-        return <GradeSlider slider={slider}/>;
-    });
-    return (
-        <div
-            className={`${isOpen ? "open" : ""} studentDrawer`}
-            style={{height: isOpen ? height : "38px"}}
-            ref={e => {
-                if (e) {
-                    // -10 is a hack fixing a bug with the height of the student drawer
-                    setHeight(e.scrollHeight - 3);
-                }
-            }}
-        >
-            <div
-                className="studentDrawerHeader"
-                onClick={() => toggleDrawer({name: student.name, isOpen})}
-            >
-                <h2>{student.name}</h2>
-                <p>{total + "/" + max}</p>
-            </div>
-            <div className="studentDrawerContent">
-                <table className="leftPannel">{sliders}</table>
-                <table className="rightPannel">
-                    <h3>Comments</h3>
-                    <textarea {...student.comment} />
-                </table>
-            </div>
-        </div>
-    );
-};
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {loading: true, users: {}};
+        this.getData = getData.bind(this);
+        this.getUsers = getUsers.bind(this);
+        this.saveData = saveData.bind(this);
+        this.deleteSlider = deleteSlider.bind(this);
+        this.addSlider = addSlider.bind(this);
     }
 
     componentDidMount() {
-        this.getData();
+        this.getData(USER);
     }
 
+    /**
+     * toggleDrawer either opens or closes a given student drawer
+     * @param {string} name - name of student's drawer
+     * @param {boolean} isOpen - if the student's drawer was open before
+     */
     toggleDrawer = ({name, isOpen}) => {
         const students = this.state.students;
         students[name].isOpen = !isOpen;
@@ -159,8 +39,7 @@ class App extends Component {
     /**
      * setUpSliderFunctions sets up onChange functions on all sliders and comment boxes
      */
-    setUpSliderFunctions = (callback = () => {
-    }) => {
+    setUpSliderFunctions = (callback = () => {}) => {
         const newStudents = Object.keys(this.state.students).reduce(
             (acc, student) => {
                 const theseSliders = this.state.students[student].sliders || {};
@@ -213,110 +92,13 @@ class App extends Component {
         this.setState(newState, callback);
     };
 
-    getData = () => {
-        const classThis = this;
-        classThis.setState({loading: true});
-        const Http = new XMLHttpRequest();
-        const url = "https://lmpotasi.w3.uvm.edu/proxyserver/getData?user=" + USER;
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                const tempState = JSON.parse(Http.responseText);
-                classThis.setState(tempState, classThis.setUpSliderFunctions);
-                classThis.getUsers();
-            }
-        };
-    };
-
-    getUsers = () => {
-        const classThis = this;
-        classThis.setState({loading: true});
-        const Http = new XMLHttpRequest();
-        const url =
-            "https://lmpotasi.w3.uvm.edu/proxyserver/getAllUsers?user=" + USER;
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                const users = JSON.parse(Http.responseText);
-                classThis.setState({users});
-                classThis.setState({loading: false});
-            }
-        };
-    };
-
-    saveData = () => {
-        const classThis = this;
-        classThis.setState({saved: false});
-        clearTimeout(this.state.saveDataTimeoutId);
-        const saveDataTimeoutId = setTimeout(() => {
-            const Http = new XMLHttpRequest();
-            const url =
-                "https://lmpotasi.w3.uvm.edu/proxyserver/updateData?data=" +
-                JSON.stringify(this.state);
-            Http.open("GET", url);
-            Http.send();
-            Http.onreadystatechange = function () {
-                if (this.readyState === 4 && this.status === 200) {
-                    classThis.setState({saved: true});
-                }
-            };
-        }, 1000);
-        this.setState({saveDataTimeoutId});
-    };
-
-    addSlider = newSlider => {
-        const newStudents = Object.keys(this.state.students).reduce(
-            (acc, student) => {
-                const newStudent = {
-                    ...this.state.students[student]
-                };
-                newStudent.sliders[newSlider.id] = newSlider;
-                return {
-                    ...acc,
-                    [student]: newStudent
-                };
-            },
-            {}
-        );
-        const newState = {
-            ...this.state,
-            students: newStudents,
-            loading: false
-        };
-        this.setState(newState, () => this.setUpSliderFunctions(this.saveData));
-    };
-
-    deleteSlider = target => {
-        const newStudents = Object.keys(this.state.students).reduce(
-            (acc, student) => {
-                const newStudent = {
-                    ...this.state.students[student]
-                };
-                Reflect.deleteProperty(newStudent.sliders, target);
-                return {
-                    ...acc,
-                    [student]: newStudent
-                };
-            },
-            {}
-        );
-        const newState = {
-            ...this.state,
-            students: newStudents,
-            loading: false
-        };
-        this.setState(newState, this.saveData);
-    };
-
     render() {
         const {students, user, users} = this.state;
         if (this.state.loading) {
             return (
                 <div className="App">
                     <img src="https://www.my-bagfactory.com/layout/od_mybagfactory_v1/images/loading-sm.gif"/>
-                    <button onClick={this.getData}>Load New Data</button>
+                    <button onClick={() => this.getData(USER)}>Load New Data</button>
                 </div>
             );
         }
