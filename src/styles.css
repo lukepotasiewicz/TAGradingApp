@@ -1,0 +1,213 @@
+.App {
+    font-family: sans-serif;
+}
+
+body {
+    /* background: #1c2022;
+    color: #fca; */
+    background: rgb(33, 35, 36);
+    color: rgb(255, 255, 255);
+    margin: 0;
+    padding-top: 50px;
+}
+
+table {
+    text-align: left;
+}
+
+nav {
+    background: rgb(63, 68, 68);
+    border-bottom: solid 2px gray;
+    box-shadow: 0 0 10px 0 #000;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+nav h1 {
+    margin: 0;
+    display: inline-block;
+    padding: 10px;
+    font-weight: 100;
+}
+
+nav p {
+    float: right;
+    margin: 0;
+    padding: 15px;
+}
+
+button {
+    border: none;
+    border-bottom: solid #026 3px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: #27e;
+    box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #06b;
+}
+
+button:active {
+    border: none;
+    border-top: solid #048 3px;
+    background-color: #048;
+}
+
+input[type="text"] {
+    border: none;
+    border-bottom: solid #27e 3px;
+    padding: 7px 10px;
+    margin-right: 8px;
+    border-radius: 5px;
+    background-color: rgb(52, 56, 56);
+    color: white;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.8);
+}
+
+.saved {
+    color: rgb(0, 219, 0);
+}
+
+.saving {
+    color: yellow;
+}
+
+.students {
+    margin: 20px;
+    box-shadow: 0 0 10px 0 #000;
+}
+
+.studentDrawer {
+    overflow: hidden;
+    transition: height 0.2s ease;
+    background: rgb(63, 68, 68);
+}
+
+.studentDrawerHeader {
+    background-color: rgb(52, 56, 56);
+    cursor: pointer;
+    border-bottom: solid 2px gray;
+    transition: background-color 0.2s ease;
+}
+
+.studentDrawerHeader:hover {
+    background-color: rgb(28, 59, 59);
+}
+
+.studentDrawerHeader h2 {
+    margin: 0;
+    padding: 2px 15px;
+    display: inline-block;
+    font-size: 26px;
+}
+
+.studentDrawerHeader p {
+    margin: 0;
+    padding: 2px 15px;
+    display: inline-block;
+    font-size: 24px;
+}
+
+.studentDrawerContent {
+    height: calc(100% - 38px);
+    box-sizing: border-box;
+}
+
+.leftPannel {
+    box-sizing: border-box;
+    vertical-align: top;
+    padding: 20px;
+    margin: 0;
+    width: 50%;
+    display: inline-block;
+}
+
+.rightPannel {
+    box-sizing: border-box;
+    height: 100%;
+    border-left: solid 2px gray;
+    vertical-align: top;
+    width: 50%;
+    display: inline-block;
+    background: rgb(52, 56, 56);
+}
+
+.rightPannel textarea {
+    color: rgb(255, 255, 255);
+    background: transparent;
+    box-sizing: border-box;
+    padding: 15px;
+    border: none;
+    height: calc(100% - 44px);
+    resize: none;
+    width: 100%;
+}
+
+.rightPannel h3 {
+    padding: 10px;
+    margin: 0;
+    border-bottom: solid 2px gray;
+}
+
+.gradeSlider p {
+    display: inline-block;
+    margin: 10px;
+}
+
+.gradeSlider .slider {
+    display: inline-block;
+    margin: 10px;
+}
+
+.sliderId {
+    text-align: right;
+}
+
+.sliderValue {
+    text-align: left;
+}
+
+.inputMin,
+.inputMax,
+.inputValue,
+.inputStep {
+    width: 80px;
+}
+
+.adminPannel {
+    margin: 20px;
+    box-shadow: 0 0 10px 0 #000;
+    background: rgb(63, 68, 68);
+}
+
+.adminPannel h3 {
+    padding: 10px;
+    margin: 0;
+    border-bottom: solid 2px gray;
+    background: rgb(52, 56, 56);
+}
+
+.adminPannelContent {
+    padding: 20px;
+}
+
+.adminPannelContent > button {
+    margin-top: 10px;
+    vertical-align: top;
+}
+
+.adminStudetns p {
+    margin: 0 20px 0 0;
+    padding: 6px;
+    display: inline-block;
+}
+
+.adminStudetns div {
+    height: 50px;
+}
