@@ -1,27 +1,51 @@
-import React, {Component, useState} from "react";
+import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
-import { AddSliderView } from './views/AddSliderView';
-import { StudentDrawer } from './views/StudentDrawerView';
+import {AddSliderView} from './views/AddSliderView';
+import {StudentDrawer} from './views/StudentDrawerView';
+import {AddUserView} from "./views/AddUserView";
+import {AddAssignmentView} from "./views/AddAssignmentView";
 
-import { getData, getUsers, saveData, deleteSlider, addSlider } from "./actions/actions";
+import {
+    getData,
+    getUsers,
+    saveData,
+    deleteSlider,
+    addSlider,
+    addUser,
+    removeUser,
+    getAssignments,
+    addAssignment,
+    removeAssignment,
+    addStudent,
+    removeStudent
+} from "./actions/actions";
 
 import "./styles.css";
+import {AddStudentView} from "./views/AddStudentView";
 
 const USER = "lmpotasi";
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {loading: true, users: {}};
+        this.state = {loading: true, users: {}, assignments: {}};
         this.getData = getData.bind(this);
         this.getUsers = getUsers.bind(this);
         this.saveData = saveData.bind(this);
         this.deleteSlider = deleteSlider.bind(this);
         this.addSlider = addSlider.bind(this);
+        this.addUser = addUser.bind(this);
+        this.removeUser = removeUser.bind(this);
+        this.getAssignments = getAssignments.bind(this);
+        this.addAssignment = addAssignment.bind(this);
+        this.removeAssignment = removeAssignment.bind(this);
+        this.addStudent = addStudent.bind(this);
+        this.removeStudent = removeStudent.bind(this);
     }
 
     componentDidMount() {
+        this.getAssignments(USER);
         this.getData(USER);
     }
 
@@ -30,52 +54,65 @@ class App extends Component {
      * @param {string} name - name of student's drawer
      * @param {boolean} isOpen - if the student's drawer was open before
      */
-    toggleDrawer = ({name, isOpen}) => {
+    toggleDrawer = ({assignment, student, isOpen}) => {
         const students = this.state.students;
-        students[name].isOpen = !isOpen;
+        students[student][assignment].isOpen = !isOpen;
         this.setState({students});
+        this.saveData();
     };
 
     /**
      * setUpSliderFunctions sets up onChange functions on all sliders and comment boxes
      */
-    setUpSliderFunctions = (callback = () => {}) => {
+    setUpSliderFunctions = (callback = () => {
+    }) => {
         const newStudents = Object.keys(this.state.students).reduce(
             (acc, student) => {
-                const theseSliders = this.state.students[student].sliders || {};
-                const newSliders = Object.keys(theseSliders).reduce(
-                    (acc, slider) => ({
-                        ...acc,
-                        [slider]: {
-                            ...theseSliders[slider],
-                            id: slider,
-                            // Creates an different onChange function for each slider on the screen
-                            onChange: e => {
-                                const students = this.state.students;
-                                (students[student].sliders || {})[slider].value =
-                                    e.target.value;
-                                this.setState({students}, this.saveData);
+                const newAssignments = Object.keys(this.state.assignments).reduce((acc, assignment) => {
+                    if (!this.state.students[student][assignment]) return acc;
+                    const theseSliders = this.state.students[student][assignment].sliders || {};
+                    const newSliders = Object.keys(theseSliders).reduce(
+                        (acc, slider) => ({
+                            ...acc,
+                            [slider]: {
+                                ...theseSliders[slider],
+                                id: slider,
+                                // Creates an different onChange function for each slider on the screen
+                                onChange: e => {
+                                    const students = this.state.students;
+                                    (students[student][assignment].sliders || {})[slider].value =
+                                        e.target.value;
+                                    this.setState({students}, this.saveData);
+                                }
                             }
+                        }),
+                        {}
+                    );
+                    const comment = {
+                        value: (this.state.students[student][assignment].comment || {}).value,
+                        onChange: () => {
                         }
-                    }),
-                    {}
-                );
-                const comment = {
-                    value: (this.state.students[student].comment || {}).value,
-                    onChange: () => {
-                    }
-                };
-                // Creates an different onChange function for each comment box on the screen
-                comment.onChange = e => {
-                    const students = this.state.students;
-                    (students[student].comment || {}).value = e.target.value;
-                    this.setState({students}, this.saveData);
-                };
+                    };
+                    // Creates an different onChange function for each comment box on the screen
+                    comment.onChange = e => {
+                        const students = this.state.students;
+                        (students[student][assignment].comment || {}).value = e.target.value;
+                        this.setState({students}, this.saveData);
+                    };
+                    const newAssignment = {
+                        ...this.state.students[student][assignment],
+                        sliders: newSliders,
+                        comment
+                    };
+                    return {
+                        ...acc,
+                        [assignment]: newAssignment
+                    };
+                }, {});
                 const newStudent = {
                     ...this.state.students[student],
+                    ...newAssignments,
                     name: student,
-                    sliders: newSliders,
-                    comment
                 };
                 return {
                     ...acc,
@@ -90,10 +127,11 @@ class App extends Component {
             saved: true
         };
         this.setState(newState, callback);
+        console.log(newState);
     };
 
     render() {
-        const {students, user, users} = this.state;
+        const {students, user, users, assignments} = this.state;
         if (this.state.loading) {
             return (
                 <div className="App">
@@ -106,62 +144,78 @@ class App extends Component {
         const adminPage = (
             <React.Fragment>
                 <h2>Admin Tools:</h2>
-                <div className="adminPannel">
+                <div className="adminPanel">
                     <h3>Assignments:</h3>
-                    <div className="adminPannelContent">
-                        <table>
-                            <tr>
-                                <th>Slider Name</th>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>Default Value</th>
-                                <th>Step</th>
-                                <th>Extra Credit</th>
-                            </tr>
-                            {Object.values(
-                                this.state.students[Object.keys(students)[0]].sliders
-                            ).map(s => (
-                                <tr>
-                                    <th>{s.id}</th>
-                                    <th>{s.min}</th>
-                                    <th>{s.max}</th>
-                                    <th>{s.value}</th>
-                                    <th>{s.step || "1"}</th>
-                                    <th>{s.isExtraCredit ? "Yes" : "No"}</th>
-                                    <th>
-                                        <button onClick={() => this.deleteSlider(s.id)}>
-                                            Remove
-                                        </button>
-                                    </th>
-                                </tr>
-                            ))}
-                            <AddSliderView addSlider={this.addSlider}/>
-                        </table>
-                        <button>Add Assignment</button>
+                    <div className="adminPanelContent">
+                        {Object.keys(assignments).map((assignment) =>
+                            <React.Fragment>
+                                <div>
+                                    <h4>{assignment}</h4>
+                                    <button onClick={() => this.removeAssignment({user: USER, assignment})}>Remove
+                                    </button>
+                                </div>
+                                <table>
+                                    <tr>
+                                        <th>Slider Name</th>
+                                        <th>Min</th>
+                                        <th>Max</th>
+                                        <th>Default Value</th>
+                                        <th>Step</th>
+                                        <th>Extra Credit</th>
+                                    </tr>
+                                    {Object.values(assignments[assignment].sliders).map(s => (
+                                        <tr>
+                                            <th>{s.id}</th>
+                                            <th>{s.min}</th>
+                                            <th>{s.max}</th>
+                                            <th>{s.value}</th>
+                                            <th>{s.step || "1"}</th>
+                                            <th>{s.isExtraCredit ? "Yes" : "No"}</th>
+                                            <th>
+                                                <button onClick={() => this.deleteSlider({
+                                                    user: USER,
+                                                    assignment,
+                                                    slider: s.id
+                                                })}>
+                                                    Remove
+                                                </button>
+                                            </th>
+                                        </tr>
+                                    ))}
+                                    <AddSliderView
+                                        addSlider={(data) => this.addSlider({user: USER, assignment, data})}/>
+                                </table>
+                            </React.Fragment>
+                        )}
+                        <AddAssignmentView user={USER} addAssignment={this.addAssignment}/>
                     </div>
                 </div>
-                <div className="adminPannel">
+                <div className="adminPanel">
                     <h3>Students</h3>
-                    <div className="adminPannelContent adminStudetns">
-                        {Object.keys(students).map(studentName => (
+                    <div className="adminPanelContent adminStudents">
+                        {Object.keys(students).map(student => (
                             <div>
-                                <p>{studentName}</p>
-                                <button>Remove</button>
+                                <p>{student}</p>
+                                <button onClick={() => this.removeStudent({user: USER, student})}>
+                                    Remove
+                                </button>
                             </div>
                         ))}
-                        <button>Add Student</button>
+                        <AddStudentView user={USER} addStudent={this.addStudent}/>
                     </div>
                 </div>
-                <div className="adminPannel">
-                    <h3>Graders</h3>
-                    <div className="adminPannelContent adminStudetns">
-                        {Object.keys(users).map(studentName => (
+                <div className="adminPanel">
+                    <h3>Users</h3>
+                    <div className="adminPanelContent adminStudents">
+                        {Object.keys(users).map(netId => (
                             <div>
-                                <p>{studentName}</p>
-                                <button>Remove</button>
+                                <p>{netId}</p>
+                                <button onClick={() => this.removeUser({user: USER, netId})}>
+                                    Remove
+                                </button>
                             </div>
                         ))}
-                        <button>Add Grader</button>
+                        <AddUserView user={USER} addUser={this.addUser}/>
                     </div>
                 </div>
             </React.Fragment>
@@ -171,7 +225,7 @@ class App extends Component {
             <div className="App">
                 <nav>
                     <h1>
-                        <strong>QuickGrade</strong> ║ {user.admin ? "Admin" : "Grader"}
+                        <strong>QuickGrade</strong> ║ {user.admin ? "Admin" : "User"}
                     </h1>
                     <p>Log Out</p>
                     <p>{USER}</p>
@@ -182,12 +236,21 @@ class App extends Component {
                     )}
                 </nav>
                 <div className="students">
-                    {Object.keys(students).map(studentName => (
-                        <StudentDrawer
-                            student={this.state.students[studentName]}
-                            isOpen={(this.state.students[studentName] || {}).isOpen}
-                            toggleDrawer={this.toggleDrawer}
-                        />
+                    {Object.values(students).map(student => (
+                        Object.keys(assignments).map(assignment =>
+                            student[assignment] ?
+                                <StudentDrawer
+                                    student={student}
+                                    assignmentName={assignment}
+                                    assignment={student[assignment]}
+                                    isOpen={(student[assignment] || {}).isOpen}
+                                    toggleDrawer={() => this.toggleDrawer({
+                                        assignment,
+                                        student: student.name,
+                                        isOpen: (student[assignment] || {}).isOpen
+                                    })}
+                                /> : null
+                        )
                     ))}
                 </div>
                 {user.admin ? adminPage : null}

@@ -119,7 +119,7 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-.leftPannel {
+.leftPanel {
     box-sizing: border-box;
     vertical-align: top;
     padding: 20px;
@@ -128,7 +128,7 @@ input[type="text"] {
     display: inline-block;
 }
 
-.rightPannel {
+.rightPanel {
     box-sizing: border-box;
     height: 100%;
     border-left: solid 2px gray;
@@ -138,7 +138,7 @@ input[type="text"] {
     background: rgb(52, 56, 56);
 }
 
-.rightPannel textarea {
+.rightPanel textarea {
     color: rgb(255, 255, 255);
     background: transparent;
     box-sizing: border-box;
@@ -149,7 +149,7 @@ input[type="text"] {
     width: 100%;
 }
 
-.rightPannel h3 {
+.rightPanel h3 {
     padding: 10px;
     margin: 0;
     border-bottom: solid 2px gray;
@@ -180,34 +180,46 @@ input[type="text"] {
     width: 80px;
 }
 
-.adminPannel {
+.adminPanel {
     margin: 20px;
     box-shadow: 0 0 10px 0 #000;
     background: rgb(63, 68, 68);
 }
 
-.adminPannel h3 {
+.adminPanel h3 {
     padding: 10px;
     margin: 0;
     border-bottom: solid 2px gray;
     background: rgb(52, 56, 56);
 }
 
-.adminPannelContent {
+.adminPanelContent {
     padding: 20px;
 }
 
-.adminPannelContent > button {
+.adminPanelContent > button {
     margin-top: 10px;
     vertical-align: top;
 }
 
-.adminStudetns p {
+.adminStudents p, .adminPanelContent h4 {
     margin: 0 20px 0 0;
     padding: 6px;
     display: inline-block;
 }
 
-.adminStudetns div {
+.adminPanelContent h4 {
+    padding-top: 20px;
+}
+
+.adminPanelContent div {
     height: 50px;
+}
+
+.adminPanel table {
+    background: rgb(52, 56, 56);
+    padding: 20px;
+}
+.adminPanelContent button {
+    vertical-align: middle;
 }

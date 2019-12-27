@@ -11,11 +11,11 @@ const GradeSlider = ({slider}) => (
 /**
  * StudentDrawer includes the ui for a given student's name, grade, and sliders for their grades
  */
-export const StudentDrawer = ({student, toggleDrawer, isOpen}) => {
+export const StudentDrawer = ({student, assignment, assignmentName, toggleDrawer, isOpen}) => {
     const [height, setHeight] = useState("");
     let total = 0;
     let max = 0;
-    const sliders = Object.values(student.sliders).map(slider => {
+    const sliders = Object.values(assignment.sliders).map(slider => {
         total += parseFloat(slider.value);
         // extra credit does not count tward the max grade in a catagory
         if (!slider.isExtraCredit) {
@@ -36,16 +36,16 @@ export const StudentDrawer = ({student, toggleDrawer, isOpen}) => {
         >
             <div
                 className="studentDrawerHeader"
-                onClick={() => toggleDrawer({name: student.name, isOpen})}
+                onClick={toggleDrawer}
             >
-                <h2>{student.name}</h2>
+                <h2>{student.name + ": " + assignmentName}</h2>
                 <p>{total + "/" + max}</p>
             </div>
             <div className="studentDrawerContent">
-                <table className="leftPannel">{sliders}</table>
-                <table className="rightPannel">
+                <table className="leftPanel">{sliders}</table>
+                <table className="rightPanel">
                     <h3>Comments</h3>
-                    <textarea {...student.comment} />
+                    <textarea {...assignment.comment} />
                 </table>
             </div>
         </div>
