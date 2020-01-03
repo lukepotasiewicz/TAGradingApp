@@ -29,10 +29,11 @@ const USER = "lmpotasi";
 class App extends Component {
     constructor(props) {
         super(props);
+        const boundSaveData = saveData.bind(this);
         this.state = {loading: true, users: {}, assignments: {}};
         this.getData = getData.bind(this);
         this.getUsers = getUsers.bind(this);
-        this.saveData = saveData.bind(this);
+        this.saveData = (() => boundSaveData(USER));
         this.deleteSlider = deleteSlider.bind(this);
         this.addSlider = addSlider.bind(this);
         this.addUser = addUser.bind(this);
@@ -165,13 +166,13 @@ class App extends Component {
                                     </tr>
                                     {Object.values(assignments[assignment].sliders).map(s => (
                                         <tr>
-                                            <th>{s.id}</th>
-                                            <th>{s.min}</th>
-                                            <th>{s.max}</th>
-                                            <th>{s.value}</th>
-                                            <th>{s.step || "1"}</th>
-                                            <th>{s.isExtraCredit ? "Yes" : "No"}</th>
-                                            <th>
+                                            <td>{s.id}</td>
+                                            <td>{s.min}</td>
+                                            <td>{s.max}</td>
+                                            <td>{s.value}</td>
+                                            <td>{s.step || "1"}</td>
+                                            <td>{s.isExtraCredit ? "Yes" : "No"}</td>
+                                            <td>
                                                 <button onClick={() => this.deleteSlider({
                                                     user: USER,
                                                     assignment,
@@ -179,7 +180,7 @@ class App extends Component {
                                                 })}>
                                                     Remove
                                                 </button>
-                                            </th>
+                                            </td>
                                         </tr>
                                     ))}
                                     <AddSliderView
@@ -207,15 +208,24 @@ class App extends Component {
                 <div className="adminPanel">
                     <h3>Users</h3>
                     <div className="adminPanelContent adminStudents">
-                        {Object.keys(users).map(netId => (
-                            <div>
-                                <p>{netId}</p>
-                                <button onClick={() => this.removeUser({user: USER, netId})}>
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                        <AddUserView user={USER} addUser={this.addUser}/>
+                        <table>
+                            <tr>
+                                <th>User NetId</th>
+                                <th>Is Admin</th>
+                            </tr>
+                            {Object.keys(users).map(netId => (
+                                <tr>
+                                    <td>{netId}</td>
+                                    <td>{users[netId].admin ? "Yes" : "No"}</td>
+                                    <td>
+                                        <button onClick={() => this.removeUser({user: USER, netId})}>
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            <AddUserView user={USER} addUser={this.addUser}/>
+                        </table>
                     </div>
                 </div>
             </React.Fragment>
@@ -236,22 +246,22 @@ class App extends Component {
                     )}
                 </nav>
                 <div className="students">
-                    {Object.values(students).map(student => (
-                        Object.keys(assignments).map(assignment =>
-                            student[assignment] ?
-                                <StudentDrawer
-                                    student={student}
-                                    assignmentName={assignment}
-                                    assignment={student[assignment]}
-                                    isOpen={(student[assignment] || {}).isOpen}
-                                    toggleDrawer={() => this.toggleDrawer({
-                                        assignment,
-                                        student: student.name,
-                                        isOpen: (student[assignment] || {}).isOpen
-                                    })}
-                                /> : null
-                        )
-                    ))}
+                    {Object.keys(assignments).map(assignment =>
+                        Object.values(students).map(student => (
+                                student[assignment] ?
+                                    <StudentDrawer
+                                        student={student}
+                                        assignmentName={assignment}
+                                        assignment={student[assignment]}
+                                        isOpen={(student[assignment] || {}).isOpen}
+                                        toggleDrawer={() => this.toggleDrawer({
+                                            assignment,
+                                            student: student.name,
+                                            isOpen: (student[assignment] || {}).isOpen
+                                        })}
+                                    /> : null
+                            )
+                        ))}
                 </div>
                 {user.admin ? adminPage : null}
             </div>

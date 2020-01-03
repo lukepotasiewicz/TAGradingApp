@@ -4,7 +4,7 @@ export const AddStudentView = ({user, addStudent}) => {
     const [student, setStudent] = useState();
     return (
         <tr className="studentDrawerContent">
-            <th>
+            <td>
                 <input
                     type="text"
                     name="student"
@@ -13,7 +13,7 @@ export const AddStudentView = ({user, addStudent}) => {
                     placeholder="Student Name"
                     onChange={e => setStudent(e.target.value)}
                 />
-            </th>
+            </td>
             <button
                 onClick={() => addStudent({user, student})}
             >

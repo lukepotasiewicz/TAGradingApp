@@ -5,7 +5,7 @@ export const AddUserView = ({user, addUser}) => {
     const [isAdmin, setIsAdmin] = useState(false);
     return (
         <tr className="studentDrawerContent">
-            <th>
+            <td>
                 <input
                     type="text"
                     name="netId"
@@ -14,8 +14,8 @@ export const AddUserView = ({user, addUser}) => {
                     placeholder="User netId"
                     onChange={e => setNetId(e.target.value)}
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="checkbox"
                     name="isAdmin"
@@ -23,7 +23,7 @@ export const AddUserView = ({user, addUser}) => {
                     className="inputExtraCredit"
                     onChange={() => setIsAdmin(!isAdmin)}
                 />
-            </th>
+            </td>
             <button
                 onClick={() => addUser({user, netId, isAdmin})}
             >

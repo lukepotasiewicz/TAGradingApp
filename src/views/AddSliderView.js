@@ -9,7 +9,7 @@ export const AddSliderView = ({addSlider}) => {
     const [isExtraCredit, setIsExtraCredit] = useState(false);
     return (
         <tr className="studentDrawerContent">
-            <th>
+            <td>
                 <input
                     type="text"
                     name="newSliderName"
@@ -18,8 +18,8 @@ export const AddSliderView = ({addSlider}) => {
                     placeholder="Slider name"
                     onChange={e => setId(e.target.value)}
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="text"
                     name="newSliderMin"
@@ -30,8 +30,8 @@ export const AddSliderView = ({addSlider}) => {
                         isNaN(e.target.value) ? null : setMin(e.target.value)
                     }
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="text"
                     name="newSliderMax"
@@ -42,8 +42,8 @@ export const AddSliderView = ({addSlider}) => {
                         isNaN(e.target.value) ? null : setMax(e.target.value)
                     }
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="text"
                     name="newSliderValue"
@@ -54,8 +54,8 @@ export const AddSliderView = ({addSlider}) => {
                         isNaN(e.target.value) ? null : setValue(e.target.value)
                     }
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="text"
                     name="newSliderStep"
@@ -64,8 +64,8 @@ export const AddSliderView = ({addSlider}) => {
                     placeholder="step"
                     onChange={e => setStep(e.target.value)}
                 />
-            </th>
-            <th>
+            </td>
+            <td>
                 <input
                     type="checkbox"
                     name="newSliderExtraCredit"
@@ -73,7 +73,7 @@ export const AddSliderView = ({addSlider}) => {
                     className="inputExtraCredit"
                     onChange={() => setIsExtraCredit(!isExtraCredit)}
                 />
-            </th>
+            </td>
             <button
                 onClick={() => addSlider({id, min, max, value, isExtraCredit, step})}
             >

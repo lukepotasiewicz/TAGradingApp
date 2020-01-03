@@ -17,7 +17,7 @@ export const StudentDrawer = ({student, assignment, assignmentName, toggleDrawer
     let max = 0;
     const sliders = Object.values(assignment.sliders).map(slider => {
         total += parseFloat(slider.value);
-        // extra credit does not count tward the max grade in a catagory
+        // extra credit does not count toward the max grade in a category
         if (!slider.isExtraCredit) {
             max += parseFloat(slider.max);
         }
@@ -29,7 +29,7 @@ export const StudentDrawer = ({student, assignment, assignmentName, toggleDrawer
             style={{height: isOpen ? height : "38px"}}
             ref={e => {
                 if (e) {
-                    // -10 is a hack fixing a bug with the height of the student drawer
+                    // -3 is a hack fixing a bug with the height of the student drawer
                     setHeight(e.scrollHeight - 3);
                 }
             }}
@@ -38,7 +38,7 @@ export const StudentDrawer = ({student, assignment, assignmentName, toggleDrawer
                 className="studentDrawerHeader"
                 onClick={toggleDrawer}
             >
-                <h2>{student.name + ": " + assignmentName}</h2>
+                <h2>{assignmentName + ": " + student.name}</h2>
                 <p>{total + "/" + max}</p>
             </div>
             <div className="studentDrawerContent">

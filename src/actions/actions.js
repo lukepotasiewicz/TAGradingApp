@@ -13,14 +13,14 @@ function apiInteraction({endpoint, queryString, onSuccess}) {
     };
 }
 
-export function saveData() {
+export function saveData(user) {
     this.setState({saved: false});
     clearTimeout(this.state.saveDataTimeoutId);
     const saveDataTimeoutId = setTimeout(() => {
         const data = { students: this.state.students };
 
         apiInteraction({
-            endpoint: "updateData", queryString: "data=" + JSON.stringify(data), onSuccess: (data) => {
+            endpoint: "updateData", queryString: "user=" + user + "&data=" + JSON.stringify(data), onSuccess: (data) => {
                 this.setState({saved: true});
             }
         });
