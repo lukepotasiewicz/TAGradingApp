@@ -152,3 +152,16 @@ export function deleteSlider({user, assignment, slider}) {
         }
     });
 }
+
+export function updateAssignmentGrader({user, assignment, student, grader}) {
+    this.setState({saved: false});
+    apiInteraction({
+        endpoint: "updateAssignmentGrader",
+        queryString: "user=" + user + "&assignment=" + assignment + "&student=" + student + "&grader=" + grader,
+        onSuccess: (resp) => {
+            this.getAssignments(user);
+            this.getData(user);
+            this.setState({saved: true});
+        }
+    });
+}

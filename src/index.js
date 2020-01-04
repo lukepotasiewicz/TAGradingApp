@@ -18,12 +18,14 @@ import {
     addAssignment,
     removeAssignment,
     addStudent,
-    removeStudent
+    removeStudent,
+    updateAssignmentGrader
 } from "./actions/actions";
 
 import "./styles.css";
 import {AddStudentView} from "./views/AddStudentView";
 
+// CHANGE THIS STRING TO CHANGE WHO IS LOGGED IN
 const USER = "lmpotasi";
 
 class App extends Component {
@@ -43,6 +45,7 @@ class App extends Component {
         this.removeAssignment = removeAssignment.bind(this);
         this.addStudent = addStudent.bind(this);
         this.removeStudent = removeStudent.bind(this);
+        this.updateAssignmentGrader = updateAssignmentGrader.bind(this);
     }
 
     componentDidMount() {
@@ -142,7 +145,7 @@ class App extends Component {
             );
         }
 
-        const adminPage = (
+        const adminPage = user.admin ? (
             <React.Fragment>
                 <h2>Admin Tools:</h2>
                 <div className="adminPanel">
@@ -194,15 +197,38 @@ class App extends Component {
                 <div className="adminPanel">
                     <h3>Students</h3>
                     <div className="adminPanelContent adminStudents">
-                        {Object.keys(students).map(student => (
-                            <div>
-                                <p>{student}</p>
-                                <button onClick={() => this.removeStudent({user: USER, student})}>
-                                    Remove
-                                </button>
-                            </div>
-                        ))}
-                        <AddStudentView user={USER} addStudent={this.addStudent}/>
+                        <table>
+                            <tr>
+                                <th>Student Name</th>
+                                {Object.keys(assignments).map(assignment =>
+                                    <th>{assignment}</th>
+                                )}
+                            </tr>
+                            {Object.keys(students).map(student => (
+                                <tr>
+                                    <td>{student}</td>
+                                    {Object.keys(assignments).map(assignment =>
+                                        <td>
+                                            <select onChange={(e) => {
+                                                this.updateAssignmentGrader({user: USER, assignment, student, grader: e.target.value})
+                                            }}>
+                                                {Object.keys(users).map(netId =>
+                                                    <option selected={netId === students[student][assignment].grader}>
+                                                        {netId}
+                                                    </option>
+                                                )}
+                                            </select>
+                                        </td>
+                                    )}
+                                    <td>
+                                        <button onClick={() => this.removeStudent({user: USER, student})}>
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            <AddStudentView user={USER} addStudent={this.addStudent}/>
+                        </table>
                     </div>
                 </div>
                 <div className="adminPanel">
@@ -229,7 +255,7 @@ class App extends Component {
                     </div>
                 </div>
             </React.Fragment>
-        );
+        ) : null;
 
         return (
             <div className="App">
