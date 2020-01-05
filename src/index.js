@@ -31,11 +31,15 @@ const USER = "lmpotasi";
 class App extends Component {
     constructor(props) {
         super(props);
-        const boundSaveData = saveData.bind(this);
         this.state = {loading: true, users: {}, assignments: {}};
+
+        // Bind USER to saveData so USER does not need to be passed into saveData
+        const boundSaveData = saveData.bind(this);
+        this.saveData = (() => boundSaveData(USER));
+
+        // All actions
         this.getData = getData.bind(this);
         this.getUsers = getUsers.bind(this);
-        this.saveData = (() => boundSaveData(USER));
         this.deleteSlider = deleteSlider.bind(this);
         this.addSlider = addSlider.bind(this);
         this.addUser = addUser.bind(this);
@@ -49,7 +53,9 @@ class App extends Component {
     }
 
     componentDidMount() {
+        // both of these calls are required to load the ui
         this.getAssignments(USER);
+        // getData calls getUsers once getData is complete
         this.getData(USER);
     }
 
@@ -131,20 +137,21 @@ class App extends Component {
             saved: true
         };
         this.setState(newState, callback);
-        console.log(newState);
     };
 
     render() {
         const {students, user, users, assignments} = this.state;
+
+        // TODO: this loading state looks unfinished, but is only shown for a few milliseconds. Either remove or make better
         if (this.state.loading) {
             return (
                 <div className="App">
-                    <img src="https://www.my-bagfactory.com/layout/od_mybagfactory_v1/images/loading-sm.gif"/>
                     <button onClick={() => this.getData(USER)}>Load New Data</button>
                 </div>
             );
         }
 
+        // only show this page if the user is an admin
         const adminPage = user.admin ? (
             <React.Fragment>
                 <h2>Admin Tools:</h2>
@@ -289,7 +296,7 @@ class App extends Component {
                             )
                         ))}
                 </div>
-                {user.admin ? adminPage : null}
+                {adminPage}
             </div>
         );
     }

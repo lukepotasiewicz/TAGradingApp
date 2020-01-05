@@ -1,5 +1,10 @@
 import React, {useState} from "react";
 
+/**
+ * AddSliderView holds the local state of all inputs and checkboxes for creating a slider
+ * @param {function} addSlider - this function is called when the user clicks add Slider
+ * @returns {JSX}
+ */
 export const AddSliderView = ({addSlider}) => {
     const [id, setId] = useState();
     const [min, setMin] = useState();

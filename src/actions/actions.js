@@ -1,4 +1,10 @@
-// API actions
+/**
+ *
+ * @param {string} endpoint - api endpoint to call
+ * @param {string} queryString - fully formed query string, without ? ("user=test&foo=bar")
+ * @param {function} onSuccess - this function is called after the request responds,
+ *                               passing the parsed json in the first param
+ */
 function apiInteraction({endpoint, queryString, onSuccess}) {
     const Http = new XMLHttpRequest();
     const url =
@@ -13,9 +19,18 @@ function apiInteraction({endpoint, queryString, onSuccess}) {
     };
 }
 
+/**
+ * API ACTIONS
+ * All functions have a corresponding function in the express server on silk.
+ * For jsdoc, please refer to the server's js
+ */
+
+
 export function saveData(user) {
     this.setState({saved: false});
+    // clear previous save data delay
     clearTimeout(this.state.saveDataTimeoutId);
+    // wait 1000ms before saving data
     const saveDataTimeoutId = setTimeout(() => {
         const data = { students: this.state.students };
 
@@ -25,6 +40,7 @@ export function saveData(user) {
             }
         });
     }, 1000);
+    // update the timeoutId for saveData, so if saveData is called in the next 1000ms, the previous call will be canceled.
     this.setState({saveDataTimeoutId});
 }
 
@@ -32,6 +48,7 @@ export function getData(user) {
     apiInteraction({
         endpoint: "getData", queryString: "user=" + user, onSuccess: (data) => {
             this.setState({students: data.students, user: data.user}, this.setUpSliderFunctions);
+            // also get all user information
             this.getUsers(user);
         }
     });
@@ -51,7 +68,7 @@ export function addUser({user, netId, isAdmin}) {
     apiInteraction({
         endpoint: "addUser",
         queryString: "user=" + user + "&netId=" + netId + "&admin=" + isAdmin,
-        onSuccess: (resp) => {
+        onSuccess: () => {
             this.getUsers(user);
             this.setState({saved: true});
         }

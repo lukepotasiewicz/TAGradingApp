@@ -1,5 +1,10 @@
 import React, {useState} from "react";
 
+/**
+ * GradeSlider is an html slider element in a table row
+ * @param {object} slider - holds necessary params for a slider (min, max, value, step, onChange)
+ * @returns {JSX}
+ */
 const GradeSlider = ({slider}) => (
     <tr className="gradeSlider">
         <th className="sliderId">{slider.id}</th>
@@ -10,6 +15,12 @@ const GradeSlider = ({slider}) => (
 
 /**
  * StudentDrawer includes the ui for a given student's name, grade, and sliders for their grades
+ * @param {string} student - student name/id
+ * @param {object} assignment - assignment object from state/server
+ * @param {string} assignmentName - assignment name/id
+ * @param {function} toggleDrawer - this is called when user wants to open or close this drawer
+ * @param {boolean} isOpen - true if this drawer should be open
+ * @returns {JSX}
  */
 export const StudentDrawer = ({student, assignment, assignmentName, toggleDrawer, isOpen}) => {
     const [height, setHeight] = useState("");

@@ -1,5 +1,11 @@
 import React, {useState} from "react";
 
+/**
+ * AddUserView holds the local state for the one input used to create a user
+ * @param {string} user - currently logged in user
+ * @param {function} addUser - this function is called when the user clicks add user
+ * @returns {JSX}
+ */
 export const AddUserView = ({user, addUser}) => {
     const [netId, setNetId] = useState();
     const [isAdmin, setIsAdmin] = useState(false);

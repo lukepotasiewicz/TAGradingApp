@@ -1,5 +1,12 @@
 import React, {useState} from "react";
 
+
+/**
+ * AddAssignment holds the local state for the one input used to create an assignment
+ * @param {string} user - currently logged in user
+ * @param {function} addAssignment - this function is called when the user clicks add assignment
+ * @returns {JSX}
+ */
 export const AddAssignmentView = ({user, addAssignment}) => {
     const [assignment, setAssignment] = useState();
     return (

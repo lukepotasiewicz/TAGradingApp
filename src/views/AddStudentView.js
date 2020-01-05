@@ -1,5 +1,11 @@
 import React, {useState} from "react";
 
+/**
+ * AddStudentView holds the local state of all inputs and checkboxes for creating a student
+ * @param {string} user - currently logged in user
+ * @param {function} addStudent - this function is called when the user clicks add student
+ * @returns {JSX}
+ */
 export const AddStudentView = ({user, addStudent}) => {
     const [student, setStudent] = useState();
     return (
